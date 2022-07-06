@@ -1,0 +1,72 @@
+    .setcpu "6502"
+    .include "zeropage.inc65"
+    .include "macros.inc65"
+    .include "io.inc65"
+    .include "vdp.inc65"
+    ;.include "acia.inc65"
+
+    .segment "VECTORS"
+    .word   nmi
+    .word   reset
+    .word   irq
+
+    .code
+reset:
+    jmp main
+nmi:
+    pha
+    lda ptr1
+    beq @next
+    jsr vdp_print_buffer
+@next:
+    pla
+    rti
+irq:
+    rti
+
+main:
+    ; interrupt disable
+    sei
+    ; initialize stack pointer
+    ldx #$ff
+    txs
+    ; initialize ACIA
+    ;jsr acia_init
+    ; initialize VDP
+    jsr vdp_init
+
+    lda #40
+    jsr vdp_set_location
+    lda #0
+    jsr vdp_set_location
+    ld16 R0, text
+    jsr vdp_puts
+
+;;;;;delay ~300ms;;
+    ldx #0
+    ldy #0
+@loop1:
+    inx
+    cpx #$ff
+    bne @loop1
+    ldx #$0
+    iny
+    cpy #$ff
+    bne @loop1
+;;;;;;;;;;;;;;;;;;;
+
+    lda #$20
+    jsr vdp_set_location
+    lda #$03
+    jsr vdp_set_location
+    ld16 R0, text2
+    jsr vdp_puts
+
+
+mainLoop:
+    ;jsr acia_gets
+    jmp mainLoop
+
+
+text:           .asciiz "Bonjour les amis."
+text2:          .asciiz "Comment ca va ?"
