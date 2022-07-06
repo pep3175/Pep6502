@@ -1,0 +1,48 @@
+LOCATE      COMP "clk" SITE "P3";
+IOBUF       PORT "clk" IO_TYPE=LVCMOS33;
+FREQUENCY   PORT "clk" 25 MHZ;
+LOCATE      COMP "reset" SITE "E19";
+IOBUF       PORT "reset" IO_TYPE=LVCMOS33;
+
+LOCATE      COMP "cpu_we" SITE "B2";
+LOCATE      COMP "mode" SITE "B3";
+LOCATE      COMP "rs" SITE "K5";
+LOCATE      COMP "data[0]" SITE "H3";
+LOCATE      COMP "data[1]" SITE "F3";
+LOCATE      COMP "data[2]" SITE "E4";
+LOCATE      COMP "data[3]" SITE "E1";
+LOCATE      COMP "data[4]" SITE "H4";
+LOCATE      COMP "data[5]" SITE "G3";
+LOCATE      COMP "data[6]" SITE "F1";
+LOCATE      COMP "data[7]" SITE "F2";
+
+LOCATE      COMP "hsync" SITE "C17";
+LOCATE      COMP "vsync" SITE "B18";
+LOCATE      COMP "rgb[2]" SITE "E2";
+LOCATE      COMP "rgb[1]" SITE "A18";
+LOCATE      COMP "rgb[0]" SITE "D1";
+LOCATE      COMP "nmi" SITE "K4";
+
+IOBUF       PORT "cpu_we" IO_TYPE=LVCMOS33;
+IOBUF       PORT "mode" IO_TYPE=LVCMOS33;
+IOBUF       PORT "rs" IO_TYPE=LVCMOS33;
+IOBUF       PORT "data[0]" IO_TYPE=LVCMOS33;
+IOBUF       PORT "data[1]" IO_TYPE=LVCMOS33;
+IOBUF       PORT "data[2]" IO_TYPE=LVCMOS33;
+IOBUF       PORT "data[3]" IO_TYPE=LVCMOS33;
+IOBUF       PORT "data[4]" IO_TYPE=LVCMOS33;
+IOBUF       PORT "data[5]" IO_TYPE=LVCMOS33;
+IOBUF       PORT "data[6]" IO_TYPE=LVCMOS33;
+IOBUF       PORT "data[7]" IO_TYPE=LVCMOS33;
+
+IOBUF       PORT "hsync" IO_TYPE=LVCMOS33;
+IOBUF       PORT "vsync" IO_TYPE=LVCMOS33;
+IOBUF       PORT "red_o" IO_TYPE=LVCMOS33;
+IOBUF       PORT "green_o" IO_TYPE=LVCMOS33;
+IOBUF       PORT "blue_o" IO_TYPE=LVCMOS33;
+IOBUF       PORT "nmi" IO_TYPE=LVCMOS33;
+
+LOCATE      COMP "ram_we" SITE "D2";
+LOCATE      COMP "clk_o" SITE "C1";
+IOBUF       PORT "ram_we" IO_TYPE=LVCMOS33;
+IOBUF       PORT "clk_o" IO_TYPE=LVCMOS33;

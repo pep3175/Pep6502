@@ -1,0 +1,15 @@
+LOCATE      COMP "clk" SITE "P3";
+IOBUF       PORT "clk" IO_TYPE=LVCMOS33;
+FREQUENCY   PORT "clk" 25 MHZ;
+
+LOCATE      COMP "hsync" SITE "C17";
+LOCATE      COMP "vsync" SITE "B18";
+LOCATE      COMP "rgb[2]" SITE "E2";
+LOCATE      COMP "rgb[1]" SITE "A18";
+LOCATE      COMP "rgb[0]" SITE "D1";
+
+IOBUF       PORT "hsync" IO_TYPE=LVCMOS33;
+IOBUF       PORT "vsync" IO_TYPE=LVCMOS33;
+IOBUF       PORT "red_o" IO_TYPE=LVCMOS33;
+IOBUF       PORT "green_o" IO_TYPE=LVCMOS33;
+IOBUF       PORT "blue_o" IO_TYPE=LVCMOS33;
