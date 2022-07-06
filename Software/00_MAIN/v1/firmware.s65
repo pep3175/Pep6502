@@ -1,0 +1,82 @@
+    .setcpu "6502"
+    .include "zeropage.inc65"
+    .include "macros.inc65"
+    .include "io.inc65"
+    .include "vdp.inc65"
+    .include "acia.inc65"
+    .include "tools.inc65"
+
+    .segment "VECTORS"
+    .word   nmi
+    .word   reset
+    .word   irq
+
+    .code
+reset:
+    jmp main
+nmi:
+    jsr vdp_print_buffer
+    bit VDP_REG
+    rti
+irq:
+    rti
+
+main:
+    ; clear interrupt
+    cli
+    ; initialize stack pointer to $01FF
+    ldx #$ff
+    txs
+    ; initialize ACIA
+    jsr acia_init
+    ; reset pointer for VDP buffer
+    lda #0
+    sta ptr1
+    ; initialize VDP
+    jsr vdp_reset
+
+    ; message welcome
+    ld16 R0, msg_welcome
+    jsr acia_puts
+    jsr vdp_puts
+
+    ;; ## Main loop ##
+Loop:
+    ld16 R0, prompt
+    jsr acia_puts
+    jsr vdp_puts
+
+    jsr acia_gets
+    jsr vdp_put_newline
+
+    lda acia_buffer
+    cmp #'p'
+    bne @not_cmd_print
+    jsr cmd_print
+    jmp Loop
+@not_cmd_print:
+    cmp #'x'
+    bne @not_cmd_clearScreen
+    jsr cmd_clearScreen
+    jmp Loop
+@not_cmd_clearScreen:
+    jmp Loop
+
+cmd_print:
+    ld16 R0, msg_command
+    jsr acia_puts
+    jsr vdp_puts
+    ld16 R0, acia_buffer + 2
+    jsr acia_puts
+    jsr acia_put_newline
+    jsr vdp_puts
+    jsr vdp_put_newline
+    rts
+
+cmd_clearScreen:
+    jmp vdp_clear_screen
+
+
+msg_welcome:            .byte "Pep's computer - 2022", $0d, $0a, $00
+msg_command:            .byte "Command : ", $00
+prompt:                 .byte "> ", $00

@@ -1,0 +1,53 @@
+    .setcpu "6502"
+    .include "zeropage.inc65"
+    .include "macros.inc65"
+    .include "io.inc65"
+    .include "acia.inc65"
+
+    .segment "VECTORS"
+    .word   nmi
+    .word   reset
+    .word   irq
+
+    .data
+
+
+    .code
+reset:
+    jmp main
+nmi:
+    rti
+irq:
+    rti
+
+main:
+    jsr acia_init
+
+    ld16 R0, msg_welcome
+    jsr acia_puts
+
+loop:
+    ld16 R0, prompt
+    jsr acia_puts
+    jsr acia_gets
+
+    lda acia_buffer
+    cmp #'p'
+    bne @not_cmd_print
+    jsr cmd_print
+    jmp loop
+@not_cmd_print:
+    jmp loop
+
+cmd_print:
+    ld16 R0, msg_command
+    jsr acia_puts
+    ld16 R0, acia_buffer + 2
+    jsr acia_puts
+    jsr acia_put_newline
+    rts
+
+
+msg_welcome:            .byte "Pep's 6502 computer - 2022", $0d, $0a, $00
+msg_command:            .byte "Your command is : ", $00
+prompt:                 .byte "> ", $00

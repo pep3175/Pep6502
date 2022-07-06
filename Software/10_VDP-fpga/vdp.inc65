@@ -1,0 +1,7 @@
+.import vdp_init
+.import vdp_send_instruction
+.import vdp_set_location
+.import vdp_print_buffer
+.import vdp_print_char
+.import vdp_puts
+.import vdp_putc

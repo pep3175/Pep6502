@@ -1,0 +1,37 @@
+    .setcpu "6502"
+    .include "io.inc65"
+    .include "lcd.inc65"
+
+    .segment "VECTORS"
+    .word   nmi
+    .word   reset
+    .word   irq
+
+    .data
+
+
+    .code
+reset:
+    jmp main
+nmi:
+    rti
+irq:
+    rti
+
+main:
+    jsr lcd_init
+    jsr clear_display
+	
+	ldx #0
+print:
+	lda message,x
+	beq stopprinting
+	jsr print_char
+	inx
+	jmp print
+stopprinting:
+
+loop: 
+    jmp loop
+
+message: .asciiz "Coucou!"

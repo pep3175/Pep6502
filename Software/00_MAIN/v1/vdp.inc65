@@ -1,0 +1,9 @@
+.import vdp_reset
+.import vdp_print_char
+.import vdp_buffer
+.import vdp_print_buffer
+.import vdp_puts
+.import vdp_put_newline
+.import vdp_clear_screen
+.import vdp_enable_interrupt
+.import vdp_disable_interrupt

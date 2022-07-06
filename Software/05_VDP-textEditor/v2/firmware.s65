@@ -1,0 +1,49 @@
+    .setcpu "6502"
+    .include "zeropage.inc65"
+    .include "macros.inc65"
+    .include "io.inc65"
+    .include "vdp.inc65"
+
+    .segment "VECTORS"
+    .word   nmi
+    .word   reset
+    .word   irq
+
+    .code
+reset:
+    jmp main
+nmi:
+    jsr vdp_print_buffer
+    lda VDP_REG
+    rti
+irq:
+    rti
+
+main:
+    ; clear interrupt
+    sei
+    ; initialize stack pointer to $01FF
+    ldx #$ff
+    txs
+    ; initialize VDP
+    jsr vdp_reset
+    ; reset pointer for VDP buffer
+    lda #0
+    sta ptr1
+    ; fill VDP buffer with text message
+    ldx #0
+@fillBuff:
+    lda text,x
+    beq @endText
+    sta vdp_buffer,x
+    inx
+    txa
+    sta ptr1
+    jmp @fillBuff
+@endText:    
+
+loop: 
+    jmp loop
+
+
+text:            .asciiz "Coucou !"

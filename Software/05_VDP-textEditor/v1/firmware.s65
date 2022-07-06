@@ -1,0 +1,32 @@
+    .setcpu "6502"
+    .include "zeropage.inc65"
+    .include "macros.inc65"
+    .include "io.inc65"
+    .include "vdp.inc65"
+
+    .segment "VECTORS"
+    .word   nmi
+    .word   reset
+    .word   irq
+
+    .data
+
+
+    .code
+reset:
+    jmp main
+nmi:
+    rti
+irq:
+    rti
+
+main:
+    sei
+    ; initialize stack pointer to $01FF
+    ldx #$ff
+    txs
+
+    jsr vdp_reset
+
+loop: 
+    jmp loop

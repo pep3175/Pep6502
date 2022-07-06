@@ -1,0 +1,28 @@
+    .setcpu "6502"
+    .segment "VECTORS"
+
+    .word   $0000
+    .word   init
+    .word   $0000
+
+    .code
+init:
+
+loop: 
+    lda #$12
+    sta $1000
+    lda #$00
+    lda $1000
+
+    jsr routine
+    
+    jmp loop
+
+routine:
+    pha
+    lda #$FF
+    tax
+    inx
+    pla
+    rts
+    

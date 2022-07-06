@@ -1,0 +1,42 @@
+    .setcpu "6502"
+    .include "zeropage.inc65"
+    .include "macros.inc65"
+    .include "io.inc65"
+    .include "acia.inc65"
+    .include "keyboard.inc65"
+
+    .segment "VECTORS"
+    .word   nmi
+    .word   reset
+    .word   irq
+
+    .data
+
+
+    .code
+reset:
+    jmp main
+nmi:
+    rti
+irq:
+    jmp keyboard_interrupt
+
+main:
+    ; initialize stack pointer to $01FF
+    ldx #$ff
+    txs
+    ; initialize ACIA
+    jsr acia_init
+    ; initialize Keyboard
+    jsr keyboard_init
+
+    ld16 R0, msg_welcome
+    jsr acia_puts
+
+
+loop:
+    jmp loop
+
+
+
+msg_welcome:            .byte "Pep's 6502 computer - 2022", $0d, $0a, $00

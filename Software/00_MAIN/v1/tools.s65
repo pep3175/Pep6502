@@ -1,0 +1,102 @@
+    .setcpu "6502"
+    .include "zeropage.inc65"
+    .include "macros.inc65"
+
+    .export delay_ms
+	.export byte2ascii
+    .export ascii2byte
+
+    .code
+; Delay the number of miliseconds specified by X
+; This is hardcoded for a 1 MHz system clock
+; @in X The delay in ms
+delay_ms:   
+	pha         ; 3
+	txa         ; 2
+	pha         ; 3
+	tya         ; 2
+	pha         ; 3
+
+	ldy $00     ; 3 (dummy operation)
+	ldy #190    ; 2
+@loop1:
+    dey         ; 190 * 2
+	bne @loop1  ; 190 * 3 - 1
+
+@loop2:
+    dex         ; 2
+	beq @return ; (x - 1) * 2 + 3
+
+	nop         ; 2
+	ldy #198    ; 2
+@loop3:
+	dey         ; 198 * 2
+	bne @loop3  ; 198 * 3 - 1
+
+	jmp @loop2  ; 3
+
+@return:
+    pla         ; 4
+	tay         ; 2
+	pla         ; 4
+	tax         ; 2
+	pla         ; 4
+	rts         ; 6 (+ 6 for JSR)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+byte2ascii:
+	sed
+	pha
+	and #%00001111
+	jsr @0000010
+	sed
+	tax
+	pla
+	lsr
+	lsr
+	lsr
+	lsr         
+@0000010:
+    cmp #10
+    bcc @0000020
+    ;clc
+    adc #96
+@0000020:
+    eor #%00110000
+	cld
+	rts
+
+
+ascii2byte:
+	pha
+	and #%01000000
+	beq @isnum
+	pla
+	and #$0f
+	adc #$09
+	jmp @skip01
+@isnum:
+	pla
+	and #$0f
+@skip01:
+	asl
+	asl
+	asl
+	asl
+	sta tmp1
+	txa
+	pha
+	and #%01000000
+	beq @isnum2
+	pla
+	and #$0f
+	clc
+	adc #$09
+	jmp @skip02
+@isnum2:
+	pla
+	and #$0f
+@skip02:
+	adc tmp1
+	rts

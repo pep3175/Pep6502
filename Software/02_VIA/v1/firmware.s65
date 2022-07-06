@@ -1,0 +1,28 @@
+    .setcpu "6502"
+    .include "io.inc65"
+
+    .segment "VECTORS"
+    .word   nmi
+    .word   reset
+    .word   irq
+
+    .data
+
+
+    .code
+reset:
+    jmp main
+nmi:
+    rti
+irq:
+    rti
+
+main:
+    lda #%11111111
+    sta VIA1_DDRA
+loop: 
+    lda #%01010101
+    sta VIA1_ORA
+    lda #%10101010
+    sta VIA1_ORA
+    jmp loop

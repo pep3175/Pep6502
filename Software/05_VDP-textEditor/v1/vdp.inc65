@@ -1,0 +1,4 @@
+.import vdp_reset
+.import vdp_print_char
+.import vdp_buffer
+.import vdp_print_buffer

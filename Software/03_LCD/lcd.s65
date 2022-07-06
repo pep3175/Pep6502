@@ -1,0 +1,71 @@
+    .setcpu "6502"
+    .include "io.inc65"
+
+    .export lcd_init
+    .export clear_display
+    .export print_char
+
+    E  = %10000000
+    RW = %01000000
+    RS = %00100000
+
+lcd_instruction:
+	jsr lcd_wait
+	sta VIA1_ORB
+	lda #0		   ; Clear RS/RW/E bits
+	sta VIA1_ORA
+	lda #E		   ; Set E bit to send instruction
+	sta VIA1_ORA
+	lda #0		   ; Clear RS/RW/E bits
+	sta VIA1_ORA
+	rts
+
+lcd_wait:
+	pha
+	lda #%00000000 ; Set all pins on port B to input
+	sta VIA1_DDRB
+@lcdbusy:
+	lda #RW
+	sta VIA1_ORA
+	lda #(RW | E) ; Set E bit to send data
+	sta VIA1_ORA
+	lda VIA1_IRB
+	and #%10000000
+	bne @lcdbusy	
+	lda #RW
+	sta VIA1_ORA
+	lda #%11111111 ; Set all pins on port B to output
+	sta VIA1_DDRB
+	pla
+	rts
+
+lcd_init:
+	lda #%11111111 ; Set all pins on port B to output
+	sta VIA1_DDRB
+	lda #%11100000 ; Set top 3 pins on port A to output
+	sta VIA1_DDRA
+
+	lda #%00111000 ; Set 8-bit mode; 2-line display; 5x8 font
+    jsr lcd_instruction
+	lda #%00001110 ; Display on; cursor on; bink off
+    jsr lcd_instruction
+	lda #%00000110 ; increment mode; don't shift display
+    jsr lcd_instruction
+
+    rts
+
+clear_display:
+	lda #%00000001 ; Clear display
+	jsr lcd_instruction
+    rts
+
+print_char:
+	jsr lcd_wait
+	sta VIA1_ORB    ; Print char in A
+	lda #RS		   ; Set RS; Clear RW/E bits
+	sta VIA1_ORA
+	lda #(E | RS) ; Set E bit to send data
+	sta VIA1_ORA
+	lda #RS		   ; Clear RS/RW/E bits
+	sta VIA1_ORA
+    rts

@@ -1,0 +1,45 @@
+    .setcpu "6502"
+    .include "io.inc65"
+
+    .segment "VECTORS"
+    .word   nmi
+    .word   reset
+    .word   irq
+
+    .data
+
+
+    .code
+reset:
+    jmp main
+nmi:
+    lda #$48	   ; Write "H"
+    sta VIA1_ORA
+    lda #0
+    sta VIA1_ORB
+    lda #1
+    sta VIA1_ORB
+    lda #0
+    sta VIA1_ORB
+
+    lda #$49	   ; Write "I"
+    sta VIA1_ORA
+    lda #0
+    sta VIA1_ORB
+    lda #1
+    sta VIA1_ORB
+    lda #0
+    sta VIA1_ORB
+    rti
+irq:
+    rti
+
+main:
+    lda #%11111111
+    sta VIA1_DDRA
+    lda #%00000001
+    sta VIA1_DDRB
+
+
+loop: 
+    jmp loop

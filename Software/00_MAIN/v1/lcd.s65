@@ -1,0 +1,106 @@
+    .setcpu "6502"
+    .include "io.inc65"
+
+    .export lcd_init
+    .export clear_display
+    .export print_char
+
+    E  = %01000000
+    RW = %00100000
+    RS = %00010000
+
+lcd_instruction:
+	jsr lcd_wait
+	pha					; put instruction on stack
+	lsr					; select high nibble
+	lsr
+	lsr
+	lsr
+	sta VIA1_ORB		; and send it
+	ora #E
+	sta VIA1_ORB
+	eor #E
+	sta VIA1_ORB
+	pla					; get instruction back
+	and #%00001111		; select low nibble
+	sta VIA1_ORB		; and send it
+	ora #E
+	sta VIA1_ORB
+	eor #E
+	sta VIA1_ORB
+	rts
+
+lcd_wait:
+	pha
+	lda #%11110000 ; Set 4 last pins on port B to input
+	sta VIA1_DDRB
+@lcdbusy:
+	lda #RW
+	sta VIA1_ORB
+	lda #(RW | E)
+	sta VIA1_ORB
+	lda VIA1_IRB	; read high nibble
+	pha				; and put it on stack because it has the busy flag
+	lda #RW
+	sta VIA1_ORB
+	lda #(RW | E)
+	sta VIA1_ORB
+	lda VIA1_IRB	; read low nibble even if we don't care
+	pla				; get high nibble back
+	and #%00001000
+	bne @lcdbusy	
+	lda #RW
+	sta VIA1_ORB
+	lda #%11111111 ; Set all pins on port B to output
+	sta VIA1_DDRB
+	pla
+	rts
+
+lcd_init:
+	lda #%11111111 ; Set all pins on port B to output
+	sta VIA1_DDRB
+
+	lda #%00000010 ; Init in 4-bit mode
+	sta VIA1_ORB
+	ora #E
+	sta VIA1_ORB
+	and #%00001111
+	sta VIA1_ORB
+
+	lda #%00101000 ; Set 4-bit mode; 2-line display; 5x8 font
+    jsr lcd_instruction
+	lda #%00001110 ; Display on; cursor on; bink off
+    jsr lcd_instruction
+	lda #%00000110 ; increment mode; don't shift display
+    jsr lcd_instruction
+
+	jsr clear_display
+    rts
+
+clear_display:
+	lda #%00000001 ; Clear display
+	jsr lcd_instruction
+    rts
+
+print_char:
+	jsr lcd_wait
+	pha
+	lsr
+	lsr
+	lsr
+	lsr
+	ora #RS		   ; Set RS
+	sta VIA1_ORB
+	ora #E
+	sta VIA1_ORB
+	eor #E
+	sta VIA1_ORB
+	pla
+	and #%00001111
+	ora #RS		   ; Set RS
+	sta VIA1_ORB
+	ora #E
+	sta VIA1_ORB
+	eor #E
+	sta VIA1_ORB
+    rts

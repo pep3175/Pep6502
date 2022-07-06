@@ -1,0 +1,40 @@
+; VIA registers
+
+VIA1_BASE   = $7f80
+VIA1_ORB    = VIA1_BASE
+VIA1_IRB    = VIA1_BASE
+VIA1_ORA    = VIA1_BASE + 1
+VIA1_IRA    = VIA1_BASE + 1
+VIA1_DDRB   = VIA1_BASE + 2
+VIA1_DDRA   = VIA1_BASE + 3
+VIA1_T1C_L  = VIA1_BASE + 4
+VIA1_T1C_H  = VIA1_BASE + 5
+VIA1_T1L_L  = VIA1_BASE + 6
+VIA1_T1L_H  = VIA1_BASE + 7
+VIA1_T2C_L  = VIA1_BASE + 8
+VIA1_T2C_H  = VIA1_BASE + 9
+VIA1_SR     = VIA1_BASE + 10
+VIA1_ACR    = VIA1_BASE + 11
+VIA1_PCR    = VIA1_BASE + 12
+VIA1_IFR    = VIA1_BASE + 13
+VIA1_IER    = VIA1_BASE + 14
+VIA1_ORA_NH = VIA1_BASE + 15
+VIA1_IRA_NH = VIA1_BASE + 15
+
+
+
+; VDP
+
+; MODE is high for address transfer and
+; low for data transfer (MODE = A0)
+VDP_VRAM           = $7F20
+VDP_REG            = VDP_VRAM + 1
+
+; The 2 MSBs of the 2nd address byte
+; must be 0 and 1
+VDP_WRITE_VRAM_BIT = $40
+
+; The MSB of the 2nd byte must be a 1
+VDP_REGISTER_BITS  = $80
+VDP_NAME_TABLE     = $0000
+VDP_PATTERN_TABLE  = $0800
